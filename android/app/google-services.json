@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "263553319953",
+    "project_id": "faculty-feedback-2fa0a",
+    "storage_bucket": "faculty-feedback-2fa0a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263553319953:android:954676e9df2b7ad2f45db0",
+        "android_client_info": {
+          "package_name": "com.example.facultyfeed"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS2ndXCdItD9r9MjdtcL1N9yL8tU0hLDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
