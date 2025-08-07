@@ -1,5 +1,7 @@
 import 'package:facultyfeed/core/models/feedback_form.dart';
 import 'package:facultyfeed/core/snackbar.dart';
+import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
+import 'package:facultyfeed/features/dashboard/controller/dashboard_controller.dart';
 import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,6 +55,7 @@ class _GiveFeedbackScreenState extends ConsumerState<GiveFeedbackScreen> {
           _responses.cast<String, int>(),
           _commentController.text.trim(),
           context,
+          widget.form.branch,
         );
     res.fold(
       (onLeft) => showPrettySnackBar(context, onLeft.message, isError: true),
@@ -61,6 +64,9 @@ class _GiveFeedbackScreenState extends ConsumerState<GiveFeedbackScreen> {
     );
     if (mounted) {
       setState(() => _isSubmitting = false);
+      // ignore: unused_result
+      // ref.invalidate(userProvider);
+      // ref.invalidate(feedbackFormsProvider);
       Navigator.of(context).pop();
     }
   }

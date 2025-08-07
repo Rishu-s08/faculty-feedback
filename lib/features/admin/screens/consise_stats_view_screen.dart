@@ -1,6 +1,4 @@
 import 'package:facultyfeed/core/models/feedback_form.dart';
-import 'package:facultyfeed/core/models/response_form.dart';
-import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +16,6 @@ class ConsiseStatsViewScreen extends ConsumerStatefulWidget {
 class _ConsiseStatsViewScreenState
     extends ConsumerState<ConsiseStatsViewScreen> {
   late Map<String, double> starsRating;
-
   late double overallAverage;
   late MapEntry<String, double> highestRated;
   late MapEntry<String, double> lowestRated;
@@ -39,11 +36,9 @@ class _ConsiseStatsViewScreenState
       return;
     }
 
-    // Compute average rating
     double total = form.ratings.values.fold(0.0, (sum, r) => sum + r);
     overallAverage = total / form.ratings.length;
 
-    // Determine highest and lowest
     highestRated = form.ratings.entries.reduce(
       (a, b) => a.value > b.value ? a : b,
     );
@@ -51,7 +46,6 @@ class _ConsiseStatsViewScreenState
       (a, b) => a.value < b.value ? a : b,
     );
 
-    //compute circular rating
     starsRating = {'5 ⭐': 0, '4 ⭐': 0, '3 ⭐': 0, '2 ⭐': 0, '1 ⭐': 0};
   }
 
@@ -60,85 +54,94 @@ class _ConsiseStatsViewScreenState
     return Scaffold(
       body:
           isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                // physics: BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildOverallRating(),
-                    SizedBox(height: 20),
-                    Text(
-                      "Rating Per Question",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,
+                    const SizedBox(height: 20),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Rating Per Question",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     PieChart(
-                      dataMap: widget.form.ratings,
-                      // chartRadius: 150,
+                      dataMap: widget.form.ratings.map(
+                        (key, value) => MapEntry(_truncate(key, 60), value),
+                      ),
                       chartType: ChartType.ring,
                       chartLegendSpacing: 32,
-                      chartRadius: MediaQuery.of(context).size.width / 2.5,
-                      colorList: [
-                        Colors.blue,
-                        Colors.green,
-                        Colors.orange,
-                        Colors.purple,
-                        Colors.red,
-                        Colors.cyan,
-                        Colors.teal,
+                      chartRadius: MediaQuery.of(context).size.width / 2.2,
+                      colorList: const [
+                        Color(0xFF4E79A7), // Blue
+                        Color(0xFFF28E2B), // Orange
+                        Color(0xFFE15759), // Red
+                        Color(0xFF76B7B2), // Teal
+                        Color(0xFF59A14F), // Green
+                        Color(0xFFEDC948), // Yellow
+                        Color(0xFFB07AA1), // Purple
+                        Color(0xFF9C755F), // Brown
+                        Color(0xFFBAB0AC),
+                        Color.fromARGB(255, 0, 42, 255),
                       ],
-                      chartValuesOptions: ChartValuesOptions(
+                      chartValuesOptions: const ChartValuesOptions(
                         showChartValuesInPercentage: false,
                         showChartValues: true,
                       ),
+                      legendOptions: const LegendOptions(
+                        legendPosition: LegendPosition.bottom,
+                        showLegendsInRow: false,
+                        showLegends: true,
+                        legendTextStyle: TextStyle(fontSize: 12),
+                      ),
                     ),
-                    SizedBox(height: 30),
-                    Text(
+                    const SizedBox(height: 30),
+                    const Text(
                       "Quick Stats",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     GridView.count(
                       shrinkWrap: true,
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 2.5,
                       physics: NeverScrollableScrollPhysics(),
+                      childAspectRatio: 1.8, // slightly taller
                       children: [
                         _statCard(
                           "Submissions",
                           widget.form.totalResponses.toString(),
                         ),
                         _statCard(
-                          "Highest Rated (${highestRated.value}⭐)",
+                          "Highest Rated (${highestRated.value.toStringAsFixed(1)}⭐)",
                           highestRated.key,
                         ),
                         _statCard(
-                          "Lowest Rated (${lowestRated.value}⭐)",
+                          "Lowest Rated (${lowestRated.value.toStringAsFixed(1)}⭐)",
                           lowestRated.key,
                         ),
-                        _statCard(
-                          "Most Common",
-                          "${overallAverage.round().toString()}⭐",
-                        ),
+                        _statCard("Most Common", "${overallAverage.round()}⭐"),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.download),
-                      label: Text("Export as PDF"),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                      ),
-                    ),
+
+                    const SizedBox(height: 20),
+                    // ElevatedButton.icon(
+                    //   onPressed: () {},
+                    //   icon: const Icon(Icons.download),
+                    //   label: const Text("Export as PDF"),
+                    //   style: ElevatedButton.styleFrom(
+                    //     minimumSize: const Size(double.infinity, 50),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -150,24 +153,26 @@ class _ConsiseStatsViewScreenState
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(
+            const Text(
               "Overall Rating",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             RatingBarIndicator(
               rating: overallAverage,
               itemBuilder:
-                  (context, _) => Icon(Icons.star, color: Colors.amber),
+                  (context, _) => const Icon(Icons.star, color: Colors.amber),
               itemCount: 5,
               itemSize: 32,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               "Avg: ${overallAverage.toStringAsFixed(2)} out of 5 from ${widget.form.totalResponses} responses",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14),
             ),
           ],
         ),
@@ -179,22 +184,37 @@ class _ConsiseStatsViewScreenState
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
-      child: Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            SizedBox(height: 8),
+            Text(
+              value,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 4),
-            Text(value, style: TextStyle(fontSize: 16)),
           ],
         ),
       ),
     );
+  }
+
+  static String _truncate(String input, int maxLength) {
+    return input.length <= maxLength
+        ? input
+        : '${input.substring(0, maxLength)}...';
   }
 }

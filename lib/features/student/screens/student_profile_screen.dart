@@ -43,7 +43,6 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Student Profile")),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -62,7 +61,8 @@ class _StudentProfileScreenState extends ConsumerState<StudentProfileScreen> {
                     const SizedBox(height: 10),
                     Text("Name: ${user.name}"),
                     Text("Email: ${user.email}"),
-                    Text("Semester: ${user.sem}"),
+                    Text("Semester: ${user.semester}"),
+                    Text("Branch: ${user.branch}"),
                     const SizedBox(height: 20),
                     const Divider(),
 

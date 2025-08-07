@@ -6,6 +6,7 @@ class ResponseForm {
   final String faculty;
   final String subject;
   final int sem;
+  final String branch;
   final String studentName;
   final String studentEmail;
   final Map<String, int> responses;
@@ -16,6 +17,7 @@ class ResponseForm {
     required this.faculty,
     required this.subject,
     required this.sem,
+    required this.branch,
     required this.studentName,
     required this.studentEmail,
     required this.responses,
@@ -28,6 +30,7 @@ class ResponseForm {
     String? faculty,
     String? subject,
     int? sem,
+    String? branch,
     String? studentName,
     String? studentEmail,
     Map<String, int>? responses,
@@ -39,6 +42,7 @@ class ResponseForm {
       faculty: faculty ?? this.faculty,
       subject: subject ?? this.subject,
       sem: sem ?? this.sem,
+      branch: branch ?? this.branch,
       studentName: studentName ?? this.studentName,
       studentEmail: studentEmail ?? this.studentEmail,
       responses: responses ?? this.responses,
@@ -53,6 +57,7 @@ class ResponseForm {
       'faculty': faculty,
       'subject': subject,
       'sem': sem,
+      'branch': branch,
       'studentName': studentName,
       'studentEmail': studentEmail,
       'responses': responses,
@@ -67,6 +72,7 @@ class ResponseForm {
       faculty: map['faculty'] as String,
       subject: map['subject'] as String,
       sem: map['sem'] as int,
+      branch: map['branch'] as String,
       studentName: map['studentName'] as String,
       studentEmail: map['studentEmail'] as String,
       responses: Map<String, int>.from((map['responses'])),
@@ -76,7 +82,7 @@ class ResponseForm {
 
   @override
   String toString() {
-    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment)';
+    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, branch: $branch, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment)';
   }
 
   @override
@@ -88,6 +94,7 @@ class ResponseForm {
         other.faculty == faculty &&
         other.subject == subject &&
         other.sem == sem &&
+        other.branch == branch &&
         other.studentName == studentName &&
         other.studentEmail == studentEmail &&
         mapEquals(other.responses, responses) &&
@@ -101,6 +108,7 @@ class ResponseForm {
         faculty.hashCode ^
         subject.hashCode ^
         sem.hashCode ^
+        branch.hashCode ^
         studentName.hashCode ^
         studentEmail.hashCode ^
         responses.hashCode ^

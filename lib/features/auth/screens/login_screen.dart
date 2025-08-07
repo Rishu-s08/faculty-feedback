@@ -175,12 +175,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              Text(
-                'Powered by Flutter & Firebase',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade500,
-                ),
-              ),
             ],
           ),
         ),

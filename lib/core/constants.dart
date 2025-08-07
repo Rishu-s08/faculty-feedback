@@ -1,3 +1,4 @@
+import 'package:facultyfeed/core/models/user_model.dart';
 import 'package:facultyfeed/features/admin/screens/admin_screen.dart';
 import 'package:facultyfeed/features/admin/screens/stats_screen.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
@@ -8,15 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Constants {
-  final WidgetRef ref;
   final List<IconData> icons = [Icons.home, Icons.person];
-  late final List pages;
-  Constants(this.ref) {
-    final user_role = ref.read(userProvider)!.role;
-    print(user_role);
+  late final List<Widget> pages;
+
+  Constants(UserModel user) {
     pages = [
       FeedScreen(),
-      user_role == 'admin' ? AdminProfileScreen() : StudentProfileScreen(),
+      user.role == 'admin' ? AdminProfileScreen() : StudentProfileScreen(),
     ];
   }
 

@@ -24,9 +24,11 @@ class GiveFeedbackRepository {
       _firestore.collection('response_feedbacks');
 
   FutureVoid giveFeedback({
+    required String userId,
     required String formID,
     required String faculty,
     required String subject,
+    required String branch,
     required int sem,
     required String studentName,
     required String studentEmail,
@@ -40,6 +42,7 @@ class GiveFeedbackRepository {
         formID: formID,
         faculty: faculty,
         subject: subject,
+        branch: branch,
         studentName: studentName,
         studentEmail: studentEmail,
         sem: sem,
@@ -70,6 +73,10 @@ class GiveFeedbackRepository {
       await feedbackFormsCollection.doc(formID).update({
         'ratings': updatedRatings,
         'totalResponses': totalResponses + 1,
+      });
+
+      FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'submittedFormIds': FieldValue.arrayUnion([formID]),
       });
 
       // ✅ Save student response in 'responses' subcollection or another collection

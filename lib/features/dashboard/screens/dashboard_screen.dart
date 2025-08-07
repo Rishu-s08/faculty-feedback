@@ -25,6 +25,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
 
     final theme = Theme.of(context);
+    final user = ref.watch(userProvider);
+    final isAdmin = user?.role == 'admin';
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final constants = Constants(user); // ✅ no ref needed anymore
+
     return Scaffold(
       appBar: AppBar(
         title:
@@ -41,23 +50,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
         ],
       ),
-      body: Constants(ref).pages[activeIndex],
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.light.cardColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(40)),
-        ),
-        elevation: 6,
-        child: Icon(Icons.add, color: AppTheme.light.iconTheme.color),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AddFeedbackScreen()),
-          );
-        },
-      ),
+      body: constants.pages[activeIndex],
+      floatingActionButton:
+          !isAdmin
+              ? null
+              : FloatingActionButton(
+                backgroundColor: AppTheme.light.cardColor,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(40)),
+                ),
+                elevation: 6,
+                child: Icon(Icons.add, color: AppTheme.light.iconTheme.color),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddFeedbackScreen(),
+                    ),
+                  );
+                },
+              ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
-        icons: Constants(ref).icons,
+        icons: constants.icons,
         activeIndex: activeIndex,
         gapLocation: GapLocation.center,
         notchSmoothness: NotchSmoothness.softEdge,

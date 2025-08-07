@@ -42,14 +42,17 @@ class AuthRepository {
       );
 
       final user = userCredential.user!;
-      final userModel = UserModel(
-        email: user.email!,
-        name: "No name",
-        role: "admin",
-        uid: user.uid,
-      );
-      await _user.doc(user.uid).set(userModel.toMap());
-      // final userModel = await getUserData(user.uid).first;
+      // final userModel = UserModel(
+      //   email: user.email!,
+      //   name: "No name",
+      //   role: "admin",
+      //   branch: "IT",
+      //   sem: 2,
+      //   uid: user.uid,
+      // );
+      // await _user.doc(user.uid).set(userModel.toMap());
+      final userModel = await getUserData(user.uid).first;
+      print(userModel);
       return right(userModel);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' ||

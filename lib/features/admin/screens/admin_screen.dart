@@ -1,11 +1,15 @@
+import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AdminProfileScreen extends StatelessWidget {
+class AdminProfileScreen extends ConsumerWidget {
   const AdminProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -19,13 +23,13 @@ class AdminProfileScreen extends StatelessWidget {
               ), // use a placeholder
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Admin Name',
+            Text(
+              user!.name,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'admin@example.com',
+            Text(
+              user.email,
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 24),

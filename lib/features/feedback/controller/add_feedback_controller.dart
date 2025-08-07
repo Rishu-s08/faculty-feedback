@@ -26,11 +26,13 @@ class AddFeedbackController {
     int year,
     int semester,
     List<String> questions,
+    String branch,
   ) async {
     return await _addFeedbackRepository.createFeedbackForm(
       subject: subject,
       facultyName: facultyName,
       year: year,
+      branch: branch,
       semester: semester,
       questions: questions,
     );

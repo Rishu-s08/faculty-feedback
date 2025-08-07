@@ -7,6 +7,7 @@ class FeedbackForm {
   final String facultyName;
   final int year;
   final int semester;
+  final String branch;
   final int totalResponses;
   final Map<String, double> ratings;
   final List<String> questions;
@@ -17,6 +18,7 @@ class FeedbackForm {
     required this.facultyName,
     required this.year,
     required this.semester,
+    required this.branch,
     required this.totalResponses,
     required this.ratings,
     required this.questions,
@@ -28,6 +30,7 @@ class FeedbackForm {
     String? subject,
     String? facultyName,
     int? year,
+    String? branch,
     int? semester,
     int? totalResponses,
     Map<String, double>? ratings,
@@ -40,6 +43,7 @@ class FeedbackForm {
       facultyName: facultyName ?? this.facultyName,
       year: year ?? this.year,
       semester: semester ?? this.semester,
+      branch: branch ?? this.branch,
       totalResponses: totalResponses ?? this.totalResponses,
       ratings: ratings ?? this.ratings,
       questions: questions ?? this.questions,
@@ -55,6 +59,7 @@ class FeedbackForm {
       'year': year,
       'semester': semester,
       'totalResponses': totalResponses,
+      'branch': branch,
       'ratings': ratings,
       'questions': questions,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -68,6 +73,7 @@ class FeedbackForm {
       facultyName: map['facultyName'] as String,
       year: map['year'] as int,
       semester: map['semester'] as int,
+      branch: map['branch'] as String,
       totalResponses: map['totalResponses'] as int,
       ratings: Map<String, double>.from(map['ratings']),
       questions: List<String>.from(map['questions']),

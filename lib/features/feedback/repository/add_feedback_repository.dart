@@ -25,6 +25,7 @@ class AddFeedbackRepository {
     required String subject,
     required String facultyName,
     required int year,
+    required String branch,
     required int semester,
     required List<String> questions,
   }) async {
@@ -39,6 +40,7 @@ class AddFeedbackRepository {
       facultyName: facultyName,
       year: year,
       semester: semester,
+      branch: branch,
       totalResponses: 0,
       ratings: questionMap,
       questions: questions,

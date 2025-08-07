@@ -31,11 +31,14 @@ class GiveFeedbackController {
     Map<String, int> responses,
     String? comment,
     BuildContext context,
+    String branch,
   ) async {
     return await _giveFeedbackRepository.giveFeedback(
       formID: formID,
       faculty: faculty,
       subject: subject,
+      branch: branch,
+      userId: _ref.read(userProvider)!.uid,
       studentName: _ref.read(userProvider)!.name,
       studentEmail: _ref.read(userProvider)!.email,
       sem: sem,
