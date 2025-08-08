@@ -274,6 +274,10 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
 'Maintains an inviting and comfortable environment',
 
 'Participates in structured learning that strengthens teaching skills',
+'Advises students toward their academic progress',
+'Acts as mentor or counselor to students',
+'Works with students outside of classes',
+
   ];
 
   void _submitForm() async {
