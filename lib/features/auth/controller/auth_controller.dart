@@ -1,6 +1,8 @@
 import 'package:facultyfeed/core/models/user_model.dart';
+import 'package:facultyfeed/core/remaining_form_dialog.dart';
 import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/features/auth/repository/auth_repository.dart';
+import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -53,10 +55,15 @@ class AuthController {
   }
 
   void signOut(BuildContext context) async {
-    final result = await _authRepository.signOut();
-    result.fold(
-      (l) => showPrettySnackBar(context, l.message),
-      (r) => _ref.read(userProvider.notifier).update((state) => null),
-    );
+    if (_ref.read(isFormRemainingProvider)) {
+      await showRemainingFormsDialog(context);
+      return;
+    } else {
+      final result = await _authRepository.signOut();
+      result.fold(
+        (l) => showPrettySnackBar(context, l.message),
+        (r) => _ref.read(userProvider.notifier).update((state) => null),
+      );
+    }
   }
 }

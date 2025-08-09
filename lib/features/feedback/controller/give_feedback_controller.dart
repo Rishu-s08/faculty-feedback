@@ -3,7 +3,6 @@ import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/core/typedefs.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
 import 'package:facultyfeed/features/feedback/repository/give_feedback_repository.dart';
-import 'package:facultyfeed/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +11,10 @@ final giveFeedbackControllerProvider = Provider((ref) {
     giveFeedbackRepository: ref.read(giveFeedbackRepositoryProvider),
     ref: ref,
   );
+});
+
+final isFormRemainingProvider = StateProvider<bool>((ref) {
+  return false;
 });
 
 class GiveFeedbackController {

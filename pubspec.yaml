@@ -46,6 +46,7 @@ dependencies:
   percent_indicator: ^4.2.5
   pie_chart: ^5.4.0
   flutter_rating_bar: ^4.0.1
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -98,3 +99,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#F8F4F0" # Background color (match your app's soft theme)
+  image: assets/images/splash_logo.png
+  android_12:
+    image: assets/images/splash_logo.png
+    icon_background_color: "#F8F4F0"

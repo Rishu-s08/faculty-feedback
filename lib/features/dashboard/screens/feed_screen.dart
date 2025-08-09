@@ -2,6 +2,7 @@ import 'package:facultyfeed/core/error_text.dart';
 import 'package:facultyfeed/core/loader.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
 import 'package:facultyfeed/features/dashboard/controller/dashboard_controller.dart';
+import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +19,15 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = ref.watch(userProvider); // includes role, branch, sem
+    final uid = ref.watch(userProvider)!.uid;
+    final user = ref
+        .watch(getUserDataProvider(uid))
+        .maybeWhen(
+          orElse: () => null,
+          data: (user) {
+            return user;
+          },
+        ); // includes role, branch, sem
     final feedbackResponseIds = user?.submittedFormIds ?? [];
 
     return ref
@@ -42,6 +51,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                               !feedbackResponseIds.contains(form.id),
                         )
                         .toList();
+            final isRemainingForms =
+                filteredForms.isNotEmpty && user.role != 'admin';
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(isFormRemainingProvider.notifier).state =
+                  isRemainingForms;
+            });
+
             return Scaffold(
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
