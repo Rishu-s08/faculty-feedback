@@ -260,8 +260,7 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
 'Keeps students abreast of progress in class',
 'Sets appropriate course objectives and outcomes',
 'Uses effective teaching methods',
-'Develops new courses',
-'Requires students to conduct research',
+
 'Covers appropriate subject matter',
 'Requires students to complete reading/writing assignment',
 'Syllabi are available to student on the first day of the course',
