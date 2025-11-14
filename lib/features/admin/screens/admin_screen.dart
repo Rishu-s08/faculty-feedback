@@ -33,20 +33,7 @@ class AdminProfileScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 24),
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 2,
-              child: ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Account Settings'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  // Navigate to account settings
-                },
-              ),
-            ),
+
             const SizedBox(height: 12),
             Card(
               shape: RoundedRectangleBorder(

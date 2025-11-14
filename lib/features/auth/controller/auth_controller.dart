@@ -43,7 +43,6 @@ class AuthController {
         return;
       },
       (r) {
-        print(r.name);
         _ref.read(userProvider.notifier).update((state) => r);
         context.go('/dashboard');
       },

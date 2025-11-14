@@ -24,7 +24,7 @@ class FacultyFeedbackApp extends ConsumerWidget {
     return MaterialApp.router(
       // scrollBehavior: ScrollBehavior(),
       scaffoldMessengerKey: scaffoldMessengerKey,
-      title: 'Cartelle',
+      title: 'Faculty Performance Evaluation',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

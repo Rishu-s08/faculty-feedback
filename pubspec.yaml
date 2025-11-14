@@ -47,6 +47,7 @@ dependencies:
   pie_chart: ^5.4.0
   flutter_rating_bar: ^4.0.1
   flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -100,8 +101,17 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_native_splash:
-  color: "#F8F4F0" # Background color (match your app's soft theme)
-  image: assets/images/splash_logo.png
+  color: "#fffffc" # Background color (match your app's soft theme)
+  image: assets/images/splash_logoo.png
+  color_dark: "#fffffc"
+  image_dark: assets/images/splash_logoo.png
   android_12:
-    image: assets/images/splash_logo.png
-    icon_background_color: "#F8F4F0"
+    image: assets/images/splash_logoo.png
+    icon_background_color: "#fffffc"
+
+flutter_launcher_icons:
+      android: true
+      ios: true
+      image_path: "assets/images/app_icon.png"
+      adaptive_icon_background: "#FFFFFF"  # or a solid color that matches your logo background
+      adaptive_icon_foreground: "assets/images/app_iconsq.png"

@@ -44,10 +44,9 @@ class AuthRepository {
       final user = userCredential.user!;
       // final userModel = UserModel(
       //   email: user.email!,
-      //   name: "No name",
+      //   name: "Nitesh Chauhan",
       //   role: "admin",
-      //   branch: "IT",
-      //   sem: 2,
+      //   branch: "CSE",
       //   uid: user.uid,
       // );
       // await _user.doc(user.uid).set(userModel.toMap());

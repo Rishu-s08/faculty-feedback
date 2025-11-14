@@ -13,7 +13,7 @@ class StatsScreen extends ConsumerStatefulWidget {
 }
 
 class _StatsScreenState extends ConsumerState<StatsScreen> {
-  late final _seletectForm;
+  // late final _seletectForm;
   int selectedIndex = 0;
 
   void switchTab(int index) {

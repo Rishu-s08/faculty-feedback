@@ -1,7 +1,5 @@
-import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/core/typedefs.dart';
 import 'package:facultyfeed/features/feedback/repository/add_feedback_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final addFeedbackControllerProvider = Provider((ref) {
