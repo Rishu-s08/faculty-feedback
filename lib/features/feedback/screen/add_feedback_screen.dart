@@ -245,46 +245,11 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
   final _subjectController = TextEditingController();
 
   final List<String> staticQuestions = [
-<<<<<<< HEAD
     'Subject Knowledge and Expertise',
     'Teaching Methodology and Delivery',
     'Communication and Clarity',
     'Punctuality and Professionalism',
     'Mentorship, Guidance, and Support',
-=======
-'Encourages independent thinking, problem solving, critical thinking',
-'Arouses enthusiasm',
-'Explains concepts skillfully',
-'Encourages class participation',
-'Is prepared for the class',
-'Is punctual for class',
-'Use of technology in instruction',
-'Communicates clearly',
-'Attends class sessions',
-'Evaluates fairly with clear rubrics',
-'Uses teaching/assessment instruments which are relevant to the goals and expected outcomes of course',
-'Returns students work promptly',
-'Keeps students abreast of progress in class',
-'Sets appropriate course objectives and outcomes',
-'Uses effective teaching methods',
-
-'Covers appropriate subject matter',
-'Requires students to complete reading/writing assignment',
-'Syllabi are available to student on the first day of the course',
-'Syllabus follows university format',
-'Maintains proper records of students performance',
-'Ethical behavior in teaching',
-'Maintains office hours',
-'Efforts in placement',
-'Effective academic consultation',
-'Maintains an inviting and comfortable environment',
-
-'Participates in structured learning that strengthens teaching skills',
-'Advises students toward their academic progress',
-'Acts as mentor or counselor to students',
-'Works with students outside of classes',
-
->>>>>>> c8120da5322b92b4704e5268c6c066afc33f8c1e
   ];
 
   void _submitForm() async {
