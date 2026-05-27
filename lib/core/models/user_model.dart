@@ -4,6 +4,7 @@ class UserModel {
   final String name;
   final String branch;
   final int? semester;
+  final bool passOut;
   final String role; // 'student' or 'admin'
   final List<String> submittedFormIds; // ✅ NEW FIELD
 
@@ -13,6 +14,7 @@ class UserModel {
     required this.name,
     required this.branch,
     this.semester,
+    this.passOut = false,
     required this.role,
     this.submittedFormIds = const [], // ✅ default empty
   });
@@ -23,6 +25,7 @@ class UserModel {
     String? name,
     String? branch,
     int? semester,
+    bool? passOut,
     String? role,
     List<String>? submittedFormIds, // ✅
   }) {
@@ -32,6 +35,7 @@ class UserModel {
       name: name ?? this.name,
       branch: branch ?? this.branch,
       semester: semester ?? this.semester,
+      passOut: passOut ?? this.passOut,
       role: role ?? this.role,
       submittedFormIds: submittedFormIds ?? this.submittedFormIds,
     );
@@ -44,6 +48,7 @@ class UserModel {
       'name': name,
       'branch': branch,
       'semester': semester,
+      'passOut': passOut,
       'role': role,
       'submittedFormIds': submittedFormIds, // ✅ serialize
     };
@@ -56,6 +61,7 @@ class UserModel {
       name: map['name'] as String,
       branch: map['branch'] as String,
       semester: map['semester'] != null ? map['semester'] as int : null,
+        passOut: map['passOut'] == true,
       role: map['role'] as String,
       submittedFormIds:
           map['submittedFormIds'] != null
@@ -66,7 +72,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, name: $name, branch: $branch, semester: $semester, role: $role, submittedFormIds: $submittedFormIds)';
+    return 'UserModel(uid: $uid, email: $email, name: $name, branch: $branch, semester: $semester, passOut: $passOut, role: $role, submittedFormIds: $submittedFormIds)';
   }
 
   @override
@@ -77,7 +83,8 @@ class UserModel {
         other.email == email &&
         other.name == name &&
         other.branch == branch &&
-        other.semester == semester &&
+          other.semester == semester &&
+        other.passOut == passOut &&
         other.role == role &&
         _listEquals(other.submittedFormIds, submittedFormIds);
   }
@@ -88,7 +95,8 @@ class UserModel {
         email.hashCode ^
         name.hashCode ^
         branch.hashCode ^
-        semester.hashCode ^
+          semester.hashCode ^
+        passOut.hashCode ^
         role.hashCode ^
         submittedFormIds.hashCode;
   }

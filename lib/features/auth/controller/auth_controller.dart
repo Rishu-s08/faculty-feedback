@@ -1,5 +1,4 @@
 import 'package:facultyfeed/core/models/user_model.dart';
-import 'package:facultyfeed/core/remaining_form_dialog.dart';
 import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/features/auth/repository/auth_repository.dart';
 import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
@@ -39,12 +38,43 @@ class AuthController {
     );
     res.fold(
       (l) {
-        showPrettySnackBar(context, l.message, isError: true);
+        // Check if context is still mounted before showing snackbar
+        if (context.mounted) {
+          showPrettySnackBar(context, l.message, isError: true);
+        }
         return;
       },
       (r) {
         _ref.read(userProvider.notifier).update((state) => r);
-        context.go('/dashboard');
+        // Check if context is still mounted before navigating
+        if (context.mounted) {
+          final isPassOut = r.passOut || r.semester == 9;
+          if (isPassOut) {
+            showDialog(
+              context: context,
+              builder: (dialogContext) {
+                return AlertDialog(
+                  title: const Text('Pass Out'),
+                  content: const Text(
+                    'Congratulations! You have passed out.\n\nBest wishes for your future journey.',
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Continue'),
+                    ),
+                  ],
+                );
+              },
+            ).then((_) {
+              if (context.mounted) {
+                context.go('/dashboard');
+              }
+            });
+          } else {
+            context.go('/dashboard');
+          }
+        }
       },
     );
   }
@@ -55,8 +85,13 @@ class AuthController {
 
   void signOut(BuildContext context) async {
     if (_ref.read(isFormRemainingProvider)) {
-      await showRemainingFormsDialog(context);
-      return;
+      // await showRemainingFormsDialog(context);
+      // return;
+      final result = await _authRepository.signOut();
+      result.fold(
+        (l) => showPrettySnackBar(context, l.message),
+        (r) => _ref.read(userProvider.notifier).update((state) => null),
+      );
     } else {
       final result = await _authRepository.signOut();
       result.fold(

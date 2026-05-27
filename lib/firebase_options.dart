@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '263553319953',
     projectId: 'faculty-feedback-2fa0a',
     storageBucket: 'faculty-feedback-2fa0a.firebasestorage.app',
-    iosBundleId: 'com.example.facultyfeed',
+    iosBundleId: 'com.threefourthdecade.facultyfeed',
   );
-
 }

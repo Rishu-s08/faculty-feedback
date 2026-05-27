@@ -1,7 +1,13 @@
 import 'package:facultyfeed/core/models/feedback_form.dart';
+import 'package:facultyfeed/features/admin/screens/add_student_screen.dart';
 import 'package:facultyfeed/features/admin/screens/form_select_screen.dart';
+import 'package:facultyfeed/features/admin/screens/manage_students_screen.dart';
+import 'package:facultyfeed/features/admin/screens/update_student_screen.dart';
+import 'package:facultyfeed/features/admin/screens/bulk_semester_update_screen.dart';
+import 'package:facultyfeed/features/admin/screens/bulk_import_format_screen.dart';
 import 'package:facultyfeed/features/admin/screens/stats_screen.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
+import 'package:facultyfeed/features/feedback/screen/edit_feedback_screen.dart';
 import 'package:facultyfeed/features/feedback/screen/give_feedback_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,6 +69,33 @@ class AppRouter {
             final form = state.extra as FeedbackForm;
             return GiveFeedbackScreen(form: form);
           },
+        ),
+        GoRoute(
+          path: '/edit-feedback-form',
+          builder: (context, state) {
+            final form = state.extra as FeedbackForm;
+            return EditFeedbackScreen(form: form);
+          },
+        ),
+        GoRoute(
+          path: '/manage-students',
+          builder: (context, state) => const ManageStudentsScreen(),
+        ),
+        GoRoute(
+          path: '/update-student',
+          builder: (context, state) => const UpdateStudentScreen(),
+        ),
+        GoRoute(
+          path: '/bulk-semester-update',
+          builder: (context, state) => BulkSemesterUpdateScreen(),
+        ),
+        GoRoute(
+          path: '/bulk-import-format',
+          builder: (context, state) => const BulkImportFormatScreen(),
+        ),
+        GoRoute(
+          path: '/add-student',
+          builder: (context, state) => const AddStudentScreen(),
         ),
       ],
     );

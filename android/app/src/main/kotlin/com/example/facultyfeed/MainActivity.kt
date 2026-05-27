@@ -1,4 +1,4 @@
-package com.example.facultyfeed
+package com.threefourthdecade.facultyfeed
 
 import io.flutter.embedding.android.FlutterActivity
 

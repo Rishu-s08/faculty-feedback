@@ -37,6 +37,7 @@ class GiveFeedbackRepository {
   }) async {
     try {
       final id = Uuid().v4();
+      final batchYear = _batchYearFromEmail(studentEmail);
       final response = ResponseForm(
         id: id,
         formID: formID,
@@ -46,6 +47,7 @@ class GiveFeedbackRepository {
         studentName: studentName,
         studentEmail: studentEmail,
         sem: sem,
+        batchYear: batchYear,
         responses: responses,
       );
 
@@ -110,5 +112,20 @@ class GiveFeedbackRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  int _batchYearFromEmail(String email) {
+    final rollNumber = email.split('@').first;
+    if (rollNumber.length < 2) {
+      throw const FormatException('Invalid student email for batch lookup');
+    }
+
+    final batchPrefix = rollNumber.substring(0, 2);
+    final batchCode = int.tryParse(batchPrefix);
+    if (batchCode == null) {
+      throw const FormatException('Invalid roll number for batch lookup');
+    }
+
+    return 2000 + batchCode;
   }
 }

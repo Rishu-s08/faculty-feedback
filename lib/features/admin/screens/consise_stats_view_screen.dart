@@ -1,4 +1,5 @@
 import 'package:facultyfeed/core/models/feedback_form.dart';
+import 'package:facultyfeed/core/services/export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +7,9 @@ import 'package:pie_chart/pie_chart.dart';
 
 class ConsiseStatsViewScreen extends ConsumerStatefulWidget {
   final FeedbackForm form;
-  const ConsiseStatsViewScreen({super.key, required this.form});
+  final int? batchYear;
+
+  const ConsiseStatsViewScreen({super.key, required this.form, this.batchYear});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -134,14 +137,20 @@ class _ConsiseStatsViewScreenState
                     ),
 
                     const SizedBox(height: 20),
-                    // ElevatedButton.icon(
-                    //   onPressed: () {},
-                    //   icon: const Icon(Icons.download),
-                    //   label: const Text("Export as PDF"),
-                    //   style: ElevatedButton.styleFrom(
-                    //     minimumSize: const Size(double.infinity, 50),
-                    //   ),
-                    // ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        await ExportService.exportConciseStatsToPDF(
+                          context: context,
+                          form: widget.form,
+                          batchYear: widget.batchYear,
+                        );
+                      },
+                      icon: const Icon(Icons.picture_as_pdf),
+                      label: const Text("Export to PDF"),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                    ),
                   ],
                 ),
               ),

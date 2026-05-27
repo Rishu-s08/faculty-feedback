@@ -40,7 +40,6 @@ class AuthRepository {
         email: email,
         password: password,
       );
-
       final user = userCredential.user!;
       // final userModel = UserModel(
       //   email: user.email!,
@@ -51,7 +50,7 @@ class AuthRepository {
       // );
       // await _user.doc(user.uid).set(userModel.toMap());
       final userModel = await getUserData(user.uid).first;
-      print(userModel);
+      // print(userModel);
       return right(userModel);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' ||
@@ -63,6 +62,7 @@ class AuthRepository {
         return left(Failure(e.message ?? 'Authentication error'));
       }
     } catch (e) {
+      print("erorrrrrrrrrrrrrrrrrrrr: $e");
       return left(Failure('Sign-in error: ${e.toString()}'));
     }
   }

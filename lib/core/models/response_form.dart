@@ -6,6 +6,7 @@ class ResponseForm {
   final String faculty;
   final String subject;
   final int sem;
+  final int? batchYear;
   final String branch;
   final String studentName;
   final String studentEmail;
@@ -17,6 +18,7 @@ class ResponseForm {
     required this.faculty,
     required this.subject,
     required this.sem,
+    this.batchYear,
     required this.branch,
     required this.studentName,
     required this.studentEmail,
@@ -30,6 +32,7 @@ class ResponseForm {
     String? faculty,
     String? subject,
     int? sem,
+    int? batchYear,
     String? branch,
     String? studentName,
     String? studentEmail,
@@ -42,6 +45,7 @@ class ResponseForm {
       faculty: faculty ?? this.faculty,
       subject: subject ?? this.subject,
       sem: sem ?? this.sem,
+      batchYear: batchYear ?? this.batchYear,
       branch: branch ?? this.branch,
       studentName: studentName ?? this.studentName,
       studentEmail: studentEmail ?? this.studentEmail,
@@ -57,6 +61,7 @@ class ResponseForm {
       'faculty': faculty,
       'subject': subject,
       'sem': sem,
+      'batchYear': batchYear,
       'branch': branch,
       'studentName': studentName,
       'studentEmail': studentEmail,
@@ -72,6 +77,7 @@ class ResponseForm {
       faculty: map['faculty'] as String,
       subject: map['subject'] as String,
       sem: map['sem'] as int,
+      batchYear: map['batchYear'] != null ? (map['batchYear'] as num).toInt() : null,
       branch: map['branch'] as String,
       studentName: map['studentName'] as String,
       studentEmail: map['studentEmail'] as String,
@@ -82,7 +88,7 @@ class ResponseForm {
 
   @override
   String toString() {
-    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, branch: $branch, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment)';
+    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, batchYear: $batchYear, branch: $branch, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment)';
   }
 
   @override
@@ -94,6 +100,7 @@ class ResponseForm {
         other.faculty == faculty &&
         other.subject == subject &&
         other.sem == sem &&
+        other.batchYear == batchYear &&
         other.branch == branch &&
         other.studentName == studentName &&
         other.studentEmail == studentEmail &&
@@ -108,6 +115,7 @@ class ResponseForm {
         faculty.hashCode ^
         subject.hashCode ^
         sem.hashCode ^
+        batchYear.hashCode ^
         branch.hashCode ^
         studentName.hashCode ^
         studentEmail.hashCode ^

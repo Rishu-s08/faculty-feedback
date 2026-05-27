@@ -41,6 +41,21 @@ class AdminProfileScreen extends ConsumerWidget {
               ),
               elevation: 2,
               child: ListTile(
+                leading: const Icon(Icons.people),
+                title: const Text('Manage Students'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  context.push('/manage-students');
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 2,
+              child: ListTile(
                 leading: const Icon(Icons.analytics),
                 title: const Text('View Statistics'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
