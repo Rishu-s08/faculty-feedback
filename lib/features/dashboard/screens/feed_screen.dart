@@ -1,5 +1,5 @@
-import 'package:facultyfeed/core/error_text.dart';
 import 'package:facultyfeed/core/loader.dart';
+import 'package:facultyfeed/core/no_internet_widget.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
 import 'package:facultyfeed/features/dashboard/controller/dashboard_controller.dart';
 import 'package:facultyfeed/features/feedback/controller/give_feedback_controller.dart';
@@ -323,7 +323,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
               ),
             );
           },
-          error: (err, _) => ErrorText(message: err.toString()),
+          error: (err, _) => NoInternetWidget(
+            message: 'Unable to load feedback forms.\nPlease check your connection.',
+            onRetry: () => ref.invalidate(feedbackFormsProvider),
+          ),
           loading: () => const Loader(),
         );
   }

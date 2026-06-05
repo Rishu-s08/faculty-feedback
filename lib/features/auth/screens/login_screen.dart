@@ -25,7 +25,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final email = _emailCtrl.text.trim();
     final password = _passwordCtrl.text.trim();
 
-    ref
+    await ref
         .read(authControllerProvider)
         .signInWithEmailAndPassword(
           email: email,
@@ -33,14 +33,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           context: context,
         );
 
-    // Delay to allow navigation to complete if successful
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Check if widget is still mounted before updating state
     if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/core/loader.dart';
 import 'package:facultyfeed/core/models/user_model.dart';
+import 'package:facultyfeed/core/no_internet_widget.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
 import 'package:facultyfeed/features/feedback/screen/add_feedback_screen.dart';
 import 'package:facultyfeed/theme/app_theme.dart';
@@ -186,28 +187,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       loading: () => const Scaffold(body: Loader()),
       error: (error, _) {
         return Scaffold(
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.cloud_off_rounded, size: 48),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Unable to load your dashboard right now.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    error.toString(),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
+          body: NoInternetWidget(
+            message: 'Unable to load your dashboard.\nPlease check your connection.',
+            onRetry: () => ref.invalidate(getUserDataProvider(user.uid)),
           ),
         );
       },

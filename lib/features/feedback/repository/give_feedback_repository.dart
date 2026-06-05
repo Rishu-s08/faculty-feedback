@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:facultyfeed/core/failure.dart';
 import 'package:facultyfeed/core/models/feedback_form.dart';
@@ -84,8 +86,10 @@ class GiveFeedbackRepository {
       // ✅ Save student response in 'responses' subcollection or another collection
       await _responseFeedbacksCollection.doc(id).set(response.toMap());
       return right(null);
+    } on SocketException {
+      return left(Failure('No internet connection. Please check your network and try again.'));
     } on FirebaseException catch (e) {
-      throw e.message!;
+      return left(Failure(e.message ?? 'Firebase error'));
     } catch (e) {
       return left(Failure(e.toString()));
     }
@@ -107,8 +111,10 @@ class GiveFeedbackRepository {
                     .toList(),
           );
       return right(form);
+    } on SocketException {
+      return left(Failure('No internet connection. Please check your network and try again.'));
     } on FirebaseException catch (e) {
-      throw e.message!;
+      return left(Failure(e.message ?? 'Firebase error'));
     } catch (e) {
       return left(Failure(e.toString()));
     }

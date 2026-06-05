@@ -1,4 +1,6 @@
 // IMPORTANT: Ensure Firebase is initialized in main.dart before using AuthRepository.
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:facultyfeed/core/failure.dart';
 import 'package:facultyfeed/core/models/user_model.dart';
@@ -58,11 +60,18 @@ class AuthRepository {
           e.code == 'wrong-password' ||
           e.code == 'invalid-email') {
         return left(Failure('Invalid email or password'));
+      } else if (e.code == 'network-request-failed') {
+        return left(Failure('No internet connection. Please check your network and try again.'));
       } else {
         return left(Failure(e.message ?? 'Authentication error'));
       }
+    } on SocketException {
+      return left(Failure('No internet connection. Please check your network and try again.'));
     } catch (e) {
-      print("erorrrrrrrrrrrrrrrrrrrr: $e");
+      final msg = e.toString().toLowerCase();
+      if (msg.contains('network') || msg.contains('socket') || msg.contains('connection')) {
+        return left(Failure('No internet connection. Please check your network and try again.'));
+      }
       return left(Failure('Sign-in error: ${e.toString()}'));
     }
   }

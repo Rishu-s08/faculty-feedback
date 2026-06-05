@@ -27,7 +27,7 @@ class AuthController {
     : _authRepository = authRepository,
       _ref = ref;
 
-  void signInWithEmailAndPassword({
+  Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
     required BuildContext context,
