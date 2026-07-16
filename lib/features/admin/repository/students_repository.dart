@@ -68,13 +68,15 @@ class StudentsRepository {
       final body = jsonDecode(resp.body) as Map<String, dynamic>;
       final uid = body['localId'] as String;
 
-      // Create UserModel (no year)
+      // Create UserModel
+      final batch = _batchFromRollNumber(rollNumber);
       final userModel = UserModel(
         uid: uid,
         email: email,
         name: studentName,
         branch: branch,
         semester: semester,
+        batch: batch,
         passOut: false,
         role: 'student',
         submittedFormIds: const [],
@@ -142,10 +144,12 @@ class StudentsRepository {
   }
 
   /// Bulk update semester for all students with `fromSemester` to `toSemester`.
+  /// If `batchYear` is provided, only students of that batch are updated.
   /// Uses batched writes (500 ops per batch) to minimize round-trips.
   FutureEither<int> bulkUpdateSemester({
     required int fromSemester,
     required int toSemester,
+    int? batchYear,
   }) async {
     try {
       final querySnap =
@@ -154,7 +158,16 @@ class StudentsRepository {
               .where('semester', isEqualTo: fromSemester)
               .get();
 
-      final docs = querySnap.docs;
+      var docs = querySnap.docs;
+
+      // Filter by batch if specified (client-side since Firestore can't do 3 where clauses easily)
+      if (batchYear != null) {
+        docs = docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return data['batch'] == batchYear;
+        }).toList();
+      }
+
       if (docs.isEmpty) return right(0);
 
       const batchLimit = 500;
@@ -167,6 +180,7 @@ class StudentsRepository {
           batch.update(doc.reference, {
             'semester': shouldPassOut ? 9 : toSemester,
             'passOut': shouldPassOut,
+            'submittedFormIds': [], // Clear so students can submit new semester's forms
           });
         }
         await batch.commit();
@@ -179,17 +193,58 @@ class StudentsRepository {
     }
   }
 
-  /// Count students with a given semester
-  Future<int> countStudentsBySemester(int semester) async {
+  /// Count students with a given semester (optionally filtered by batch)
+  Future<int> countStudentsBySemester(int semester, {int? batchYear}) async {
     try {
       final snap =
           await _users
               .where('role', isEqualTo: 'student')
               .where('semester', isEqualTo: semester)
               .get();
-      return snap.docs.length;
+      if (batchYear == null) return snap.docs.length;
+      return snap.docs.where((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return data['batch'] == batchYear;
+      }).length;
     } catch (e) {
       return 0;
+    }
+  }
+
+  /// Get counts of students grouped by semester (only semesters with students)
+  Future<Map<int, int>> getActiveSemesterCounts() async {
+    try {
+      final snap = await _users.where('role', isEqualTo: 'student').get();
+      final Map<int, int> counts = {};
+      for (final doc in snap.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final sem = data['semester'] as int?;
+        if (sem != null) {
+          counts[sem] = (counts[sem] ?? 0) + 1;
+        }
+      }
+      return counts;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  /// Get available batch years from all students
+  Future<List<int>> getAvailableBatches() async {
+    try {
+      final snap = await _users.where('role', isEqualTo: 'student').get();
+      final Set<int> batches = {};
+      for (final doc in snap.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final batch = data['batch'];
+        if (batch != null) {
+          batches.add((batch as num).toInt());
+        }
+      }
+      final list = batches.toList()..sort((a, b) => b.compareTo(a));
+      return list;
+    } catch (e) {
+      return [];
     }
   }
 
@@ -317,6 +372,19 @@ class StudentsRepository {
       });
     } catch (e) {
       return left(Failure('Bulk import error: ${e.toString()}'));
+    }
+  }
+
+  /// Derive batch year (e.g. 2024) from roll number prefix (e.g. "24EMBCS001")
+  int? _batchFromRollNumber(String rollNumber) {
+    try {
+      if (rollNumber.length < 2) return null;
+      final prefix = rollNumber.substring(0, 2);
+      final code = int.tryParse(prefix);
+      if (code == null) return null;
+      return 2000 + code;
+    } catch (_) {
+      return null;
     }
   }
 }

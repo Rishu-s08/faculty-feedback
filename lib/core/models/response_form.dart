@@ -12,6 +12,9 @@ class ResponseForm {
   final String studentEmail;
   final Map<String, int> responses;
   final String? comment;
+  final String? academicYear;    // e.g. "2026-2027"
+  final String? term;            // "Odd" or "Even"
+  final String? feedbackCycle;   // e.g. "2026-2027_Odd"
   ResponseForm({
     required this.id,
     required this.formID,
@@ -24,6 +27,9 @@ class ResponseForm {
     required this.studentEmail,
     required this.responses,
     this.comment,
+    this.academicYear,
+    this.term,
+    this.feedbackCycle,
   });
 
   ResponseForm copyWith({
@@ -38,6 +44,9 @@ class ResponseForm {
     String? studentEmail,
     Map<String, int>? responses,
     String? comment,
+    String? academicYear,
+    String? term,
+    String? feedbackCycle,
   }) {
     return ResponseForm(
       id: id ?? this.id,
@@ -51,6 +60,9 @@ class ResponseForm {
       studentEmail: studentEmail ?? this.studentEmail,
       responses: responses ?? this.responses,
       comment: comment ?? this.comment,
+      academicYear: academicYear ?? this.academicYear,
+      term: term ?? this.term,
+      feedbackCycle: feedbackCycle ?? this.feedbackCycle,
     );
   }
 
@@ -67,6 +79,9 @@ class ResponseForm {
       'studentEmail': studentEmail,
       'responses': responses,
       'comment': comment,
+      'academicYear': academicYear,
+      'term': term,
+      'feedbackCycle': feedbackCycle,
     };
   }
 
@@ -83,12 +98,15 @@ class ResponseForm {
       studentEmail: map['studentEmail'] as String,
       responses: Map<String, int>.from((map['responses'])),
       comment: map['comment'] != null ? map['comment'] as String : null,
+      academicYear: map['academicYear'] != null ? map['academicYear'] as String : null,
+      term: map['term'] != null ? map['term'] as String : null,
+      feedbackCycle: map['feedbackCycle'] != null ? map['feedbackCycle'] as String : null,
     );
   }
 
   @override
   String toString() {
-    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, batchYear: $batchYear, branch: $branch, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment)';
+    return 'ResponseForm(id: $id, formID: $formID, faculty: $faculty, subject: $subject, sem: $sem, batchYear: $batchYear, branch: $branch, studentName: $studentName, studentEmail: $studentEmail, responses: $responses, comment: $comment, academicYear: $academicYear, term: $term, feedbackCycle: $feedbackCycle)';
   }
 
   @override
@@ -105,7 +123,10 @@ class ResponseForm {
         other.studentName == studentName &&
         other.studentEmail == studentEmail &&
         mapEquals(other.responses, responses) &&
-        other.comment == comment;
+        other.comment == comment &&
+        other.academicYear == academicYear &&
+        other.term == term &&
+        other.feedbackCycle == feedbackCycle;
   }
 
   @override
@@ -120,6 +141,9 @@ class ResponseForm {
         studentName.hashCode ^
         studentEmail.hashCode ^
         responses.hashCode ^
-        comment.hashCode;
+        comment.hashCode ^
+        academicYear.hashCode ^
+        term.hashCode ^
+        feedbackCycle.hashCode;
   }
 }

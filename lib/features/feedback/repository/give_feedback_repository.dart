@@ -6,6 +6,7 @@ import 'package:facultyfeed/core/models/feedback_form.dart';
 import 'package:facultyfeed/core/models/response_form.dart';
 import 'package:facultyfeed/core/providers/firebase_providers.dart';
 import 'package:facultyfeed/core/typedefs.dart';
+import 'package:facultyfeed/core/utils/feedback_cycle_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
@@ -40,6 +41,7 @@ class GiveFeedbackRepository {
     try {
       final id = Uuid().v4();
       final batchYear = _batchYearFromEmail(studentEmail);
+      final cycleInfo = computeFeedbackCycle(batchYear: batchYear, sem: sem);
       final response = ResponseForm(
         id: id,
         formID: formID,
@@ -51,35 +53,42 @@ class GiveFeedbackRepository {
         sem: sem,
         batchYear: batchYear,
         responses: responses,
+        comment: comment,
+        academicYear: cycleInfo.academicYear,
+        term: cycleInfo.term,
+        feedbackCycle: cycleInfo.feedbackCycle,
       );
 
-      final docSnapshot = await feedbackFormsCollection.doc(formID).get();
-      if (!docSnapshot.exists) throw Exception("Feedback form not found");
+      // ✅ Use transaction to prevent race condition on concurrent submissions
+      await _firestore.runTransaction((transaction) async {
+        final docSnapshot = await transaction.get(feedbackFormsCollection.doc(formID));
+        if (!docSnapshot.exists) throw Exception("Feedback form not found");
 
-      final data = docSnapshot.data()! as Map<String, dynamic>;
-      final FeedbackForm form = FeedbackForm.fromMap(data);
+        final data = docSnapshot.data()! as Map<String, dynamic>;
+        final FeedbackForm form = FeedbackForm.fromMap(data);
 
-      final prevRatings = form.ratings;
-      final totalResponses = form.totalResponses;
+        final prevRatings = form.ratings;
+        final totalResponses = form.totalResponses;
 
-      // ✅ New averaged ratings
-      Map<String, double> updatedRatings = {};
-      responses.forEach((question, newRating) {
-        final oldRating = prevRatings[question] ?? 0.0;
-        final newAverage =
-            ((oldRating * totalResponses) + newRating) / (totalResponses + 1);
-        updatedRatings[question] = double.parse(
-          newAverage.toStringAsFixed(2),
-        ); // rounding
+        // New averaged ratings
+        Map<String, double> updatedRatings = {};
+        responses.forEach((question, newRating) {
+          final oldRating = prevRatings[question] ?? 0.0;
+          final newAverage =
+              ((oldRating * totalResponses) + newRating) / (totalResponses + 1);
+          updatedRatings[question] = double.parse(
+            newAverage.toStringAsFixed(2),
+          );
+        });
+
+        // Update the FeedbackForm doc atomically
+        transaction.update(feedbackFormsCollection.doc(formID), {
+          'ratings': updatedRatings,
+          'totalResponses': totalResponses + 1,
+        });
       });
 
-      // ✅ Update the FeedbackForm doc
-      await feedbackFormsCollection.doc(formID).update({
-        'ratings': updatedRatings,
-        'totalResponses': totalResponses + 1,
-      });
-
-      FirebaseFirestore.instance.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'submittedFormIds': FieldValue.arrayUnion([formID]),
       });
 
@@ -121,17 +130,17 @@ class GiveFeedbackRepository {
   }
 
   int _batchYearFromEmail(String email) {
-    final rollNumber = email.split('@').first;
-    if (rollNumber.length < 2) {
-      throw const FormatException('Invalid student email for batch lookup');
-    }
+    try {
+      final rollNumber = email.split('@').first;
+      if (rollNumber.length < 2) return 0;
 
-    final batchPrefix = rollNumber.substring(0, 2);
-    final batchCode = int.tryParse(batchPrefix);
-    if (batchCode == null) {
-      throw const FormatException('Invalid roll number for batch lookup');
-    }
+      final batchPrefix = rollNumber.substring(0, 2);
+      final batchCode = int.tryParse(batchPrefix);
+      if (batchCode == null) return 0;
 
-    return 2000 + batchCode;
+      return 2000 + batchCode;
+    } catch (_) {
+      return 0;
+    }
   }
 }

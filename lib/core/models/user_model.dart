@@ -4,9 +4,10 @@ class UserModel {
   final String name;
   final String branch;
   final int? semester;
+  final int? batch; // admission year e.g. 2024
   final bool passOut;
   final String role; // 'student' or 'admin'
-  final List<String> submittedFormIds; // ✅ NEW FIELD
+  final List<String> submittedFormIds;
 
   UserModel({
     required this.uid,
@@ -14,9 +15,10 @@ class UserModel {
     required this.name,
     required this.branch,
     this.semester,
+    this.batch,
     this.passOut = false,
     required this.role,
-    this.submittedFormIds = const [], // ✅ default empty
+    this.submittedFormIds = const [],
   });
 
   UserModel copyWith({
@@ -25,9 +27,10 @@ class UserModel {
     String? name,
     String? branch,
     int? semester,
+    int? batch,
     bool? passOut,
     String? role,
-    List<String>? submittedFormIds, // ✅
+    List<String>? submittedFormIds,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -35,6 +38,7 @@ class UserModel {
       name: name ?? this.name,
       branch: branch ?? this.branch,
       semester: semester ?? this.semester,
+      batch: batch ?? this.batch,
       passOut: passOut ?? this.passOut,
       role: role ?? this.role,
       submittedFormIds: submittedFormIds ?? this.submittedFormIds,
@@ -48,9 +52,10 @@ class UserModel {
       'name': name,
       'branch': branch,
       'semester': semester,
+      'batch': batch,
       'passOut': passOut,
       'role': role,
-      'submittedFormIds': submittedFormIds, // ✅ serialize
+      'submittedFormIds': submittedFormIds,
     };
   }
 
@@ -61,7 +66,8 @@ class UserModel {
       name: map['name'] as String,
       branch: map['branch'] as String,
       semester: map['semester'] != null ? map['semester'] as int : null,
-        passOut: map['passOut'] == true,
+      batch: map['batch'] != null ? (map['batch'] as num).toInt() : null,
+      passOut: map['passOut'] == true,
       role: map['role'] as String,
       submittedFormIds:
           map['submittedFormIds'] != null
@@ -72,7 +78,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(uid: $uid, email: $email, name: $name, branch: $branch, semester: $semester, passOut: $passOut, role: $role, submittedFormIds: $submittedFormIds)';
+    return 'UserModel(uid: $uid, email: $email, name: $name, branch: $branch, semester: $semester, batch: $batch, passOut: $passOut, role: $role, submittedFormIds: $submittedFormIds)';
   }
 
   @override
@@ -83,7 +89,8 @@ class UserModel {
         other.email == email &&
         other.name == name &&
         other.branch == branch &&
-          other.semester == semester &&
+        other.semester == semester &&
+        other.batch == batch &&
         other.passOut == passOut &&
         other.role == role &&
         _listEquals(other.submittedFormIds, submittedFormIds);
@@ -95,7 +102,8 @@ class UserModel {
         email.hashCode ^
         name.hashCode ^
         branch.hashCode ^
-          semester.hashCode ^
+        semester.hashCode ^
+        batch.hashCode ^
         passOut.hashCode ^
         role.hashCode ^
         submittedFormIds.hashCode;

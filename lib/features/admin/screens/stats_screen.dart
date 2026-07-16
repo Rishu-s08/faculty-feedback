@@ -19,7 +19,9 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
   bool _loading = true;
   List<ResponseForm> _allResponses = [];
   List<int> _availableBatches = [];
+  List<String> _availableCycles = [];
   int? _selectedBatchYear;
+  String? _selectedCycle;
 
   @override
   void initState() {
@@ -41,10 +43,19 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
         .toList()
       ..sort((a, b) => b.compareTo(a));
 
+    final cycles = responses
+        .map((response) => response.feedbackCycle)
+        .whereType<String>()
+        .toSet()
+        .toList()
+      ..sort((a, b) => b.compareTo(a));
+
     setState(() {
       _allResponses = responses;
       _availableBatches = batches;
-      _selectedBatchYear = batches.isNotEmpty ? batches.first : null;
+      _availableCycles = cycles;
+      _selectedCycle = cycles.isNotEmpty ? cycles.first : null;
+      _selectedBatchYear = null; // batch year is secondary filter now
       _loading = false;
     });
   }
@@ -56,13 +67,21 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
   }
 
   List<ResponseForm> get _filteredResponses {
-    if (_selectedBatchYear == null) {
-      return _allResponses;
+    var filtered = _allResponses.toList();
+
+    if (_selectedCycle != null) {
+      filtered = filtered
+          .where((response) => response.feedbackCycle == _selectedCycle)
+          .toList();
     }
 
-    return _allResponses
-        .where((response) => response.batchYear == _selectedBatchYear)
-        .toList();
+    if (_selectedBatchYear != null) {
+      filtered = filtered
+          .where((response) => response.batchYear == _selectedBatchYear)
+          .toList();
+    }
+
+    return filtered;
   }
 
   FeedbackForm get _filteredForm {
@@ -127,28 +146,58 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
               const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DropdownButtonFormField<int?>(
-                  value: _selectedBatchYear,
-                  decoration: const InputDecoration(
-                    labelText: 'Batch Year',
-                    border: OutlineInputBorder(),
-                  ),
-                  items:
-                      _availableBatches
-                          .map(
-                            (batchYear) => DropdownMenuItem<int?>(
-                              value: batchYear,
-                              child: Text('$batchYear Batch'),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: _availableBatches.isEmpty
-                      ? null
-                      : (value) {
-                          setState(() {
-                            _selectedBatchYear = value;
-                          });
-                        },
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String?>(
+                      value: _selectedCycle,
+                      decoration: const InputDecoration(
+                        labelText: 'Feedback Cycle',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text('All Cycles'),
+                        ),
+                        ..._availableCycles.map(
+                          (cycle) => DropdownMenuItem<String?>(
+                            value: cycle,
+                            child: Text(cycle.replaceAll('_', ' ')),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCycle = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    DropdownButtonFormField<int?>(
+                      value: _selectedBatchYear,
+                      decoration: const InputDecoration(
+                        labelText: 'Batch Year',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        const DropdownMenuItem<int?>(
+                          value: null,
+                          child: Text('All Batches'),
+                        ),
+                        ..._availableBatches.map(
+                          (batchYear) => DropdownMenuItem<int?>(
+                            value: batchYear,
+                            child: Text('$batchYear Batch'),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedBatchYear = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
