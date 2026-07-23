@@ -1,3 +1,4 @@
+import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/features/admin/repository/students_repository.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
 
   bool _isLoading = false;
 
-  final branches = ['CSE', 'ECE', 'ME', 'CE', 'EE', 'IT'];
+  final branches = Constants.branches;
   final semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
   @override

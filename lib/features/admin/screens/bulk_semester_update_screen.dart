@@ -16,11 +16,11 @@ class _BulkSemesterUpdateScreenState extends ConsumerState<BulkSemesterUpdateScr
   int? _selectedBatch;
   bool _loading = false;
   int _count = 0;
-  Map<int, int> _activeSemesters = {};
+  List<Map<String, dynamic>> _breakdown = [];
   List<int> _availableBatches = [];
-  bool _loadingActive = true;
+  bool _loadingData = true;
 
-  final semesters = [1,2,3,4,5,6,7,8];
+  final semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
   @override
   void initState() {
@@ -30,13 +30,13 @@ class _BulkSemesterUpdateScreenState extends ConsumerState<BulkSemesterUpdateScr
 
   Future<void> _loadData() async {
     final repo = ref.read(studentsRepositoryProvider);
-    final counts = await repo.getActiveSemesterCounts();
+    final breakdown = await repo.getDetailedStudentBreakdown();
     final batches = await repo.getAvailableBatches();
     if (mounted) {
       setState(() {
-        _activeSemesters = counts;
+        _breakdown = breakdown;
         _availableBatches = batches;
-        _loadingActive = false;
+        _loadingData = false;
       });
     }
   }
@@ -106,112 +106,15 @@ class _BulkSemesterUpdateScreenState extends ConsumerState<BulkSemesterUpdateScr
       showPrettySnackBar(context, failure.message, isError: true);
     }, (updatedCount) {
       showPrettySnackBar(context, 'Updated $updatedCount students');
-      _loadData(); // Refresh the overview
+      _loadData();
       setState(() { _count = 0; _fromSemester = null; _toSemester = null; });
     });
   }
 
-  Widget _buildActiveSemestersCard(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (_loadingActive) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
-
-    if (_activeSemesters.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('No students found', style: theme.textTheme.bodyMedium),
-        ),
-      );
-    }
-
-    final sortedEntries = _activeSemesters.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.groups, color: theme.colorScheme.primary, size: 22),
-                const SizedBox(width: 8),
-                Text(
-                  'Students Currently In',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: sortedEntries.map((entry) {
-                final sem = entry.key;
-                final count = entry.value;
-                final label = sem == 9 ? 'Pass Out' : 'Sem $sem';
-                final isEven = sem != 9 && sem.isEven;
-
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isEven
-                        ? theme.colorScheme.primary.withAlpha((0.10 * 255).toInt())
-                        : theme.colorScheme.secondary.withAlpha((0.10 * 255).toInt()),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isEven
-                          ? theme.colorScheme.primary.withAlpha((0.3 * 255).toInt())
-                          : theme.colorScheme.secondary.withAlpha((0.3 * 255).toInt()),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        label,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isEven
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.secondary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '$count',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: isEven
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Bulk Semester Update')),
       body: SingleChildScrollView(
@@ -219,8 +122,7 @@ class _BulkSemesterUpdateScreenState extends ConsumerState<BulkSemesterUpdateScr
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildActiveSemestersCard(context),
-            const SizedBox(height: 20),
+            // --- Action Section ---
             DropdownButtonFormField<int?>(
               value: _selectedBatch,
               decoration: const InputDecoration(labelText: 'Filter by Batch (optional)'),
@@ -247,17 +149,174 @@ class _BulkSemesterUpdateScreenState extends ConsumerState<BulkSemesterUpdateScr
               ],
               onChanged: (v) => setState(() { _toSemester = v; }),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: _loading ? null : _fetchCount, child: Text(_loading ? 'Checking...' : 'Check Affected Count')),
-            const SizedBox(height: 12),
-            Text('Affected students: $_count'),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
+            ElevatedButton(
+              onPressed: _loading ? null : _fetchCount,
+              child: Text(_loading ? 'Checking...' : 'Check Affected Count'),
+            ),
+            if (_count > 0) ...[
+              const SizedBox(height: 10),
+              Text(
+                'Affected: $_count students',
+                style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
+            const SizedBox(height: 14),
             ElevatedButton(
               onPressed: (_loading || _count == 0) ? null : _confirmAndRun,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: Text(_loading ? 'Processing...' : 'Run Bulk Update'),
+              child: Text(
+                _loading ? 'Processing...' : 'Run Bulk Update',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+
+            // --- Detailed Breakdown ---
+            const SizedBox(height: 28),
+            _buildBreakdownSection(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBreakdownSection(ThemeData theme) {
+    if (_loadingData) {
+      return const Center(child: Padding(
+        padding: EdgeInsets.all(20),
+        child: CircularProgressIndicator(),
+      ));
+    }
+
+    if (_breakdown.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text('No student data available', style: theme.textTheme.bodyMedium),
+      );
+    }
+
+    // Group breakdown by semester
+    final Map<int, List<Map<String, dynamic>>> bySemester = {};
+    for (final item in _breakdown) {
+      final sem = item['semester'] as int;
+      bySemester.putIfAbsent(sem, () => []).add(item);
+    }
+    final sortedSemesters = bySemester.keys.toList()..sort();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.analytics_outlined, size: 20, color: theme.colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              'Student Distribution',
+              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        ...sortedSemesters.map((sem) {
+          final items = bySemester[sem]!;
+          final totalInSem = items.fold<int>(0, (sum, e) => sum + (e['count'] as int));
+          final semLabel = sem == 9 ? 'Pass Out' : 'Semester $sem';
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Theme(
+              data: theme.copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                title: Row(
+                  children: [
+                    Text(
+                      semLabel,
+                      style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withAlpha((0.10 * 255).toInt()),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$totalInSem',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(2),
+                        1: FlexColumnWidth(2),
+                        2: FlexColumnWidth(1),
+                      },
+                      children: [
+                        TableRow(
+                          children: [
+                            _tableHeader('Branch'),
+                            _tableHeader('Batch'),
+                            _tableHeader('Count'),
+                          ],
+                        ),
+                        ...items.map((item) {
+                          final batch = item['batch'] as int;
+                          return TableRow(
+                            children: [
+                              _tableCell(item['branch'] as String),
+                              _tableCell(batch == 0 ? '—' : '$batch'),
+                              _tableCell('${item['count']}', bold: true),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _tableHeader(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey.shade600,
+        ),
+      ),
+    );
+  }
+
+  Widget _tableCell(String text, {bool bold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
         ),
       ),
     );

@@ -223,6 +223,7 @@
 
 //static from now
 
+import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/core/snackbar.dart';
 import 'package:facultyfeed/features/feedback/controller/add_feedback_controller.dart';
 import 'package:flutter/material.dart';
@@ -347,7 +348,7 @@ class _AddFeedbackScreenState extends ConsumerState<AddFeedbackScreen> {
                   border: OutlineInputBorder(),
                 ),
                 items:
-                    ['CSE', 'IT']
+                    Constants.branches
                         .map(
                           (branch) => DropdownMenuItem(
                             value: branch,

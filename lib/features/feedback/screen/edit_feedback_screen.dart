@@ -1,3 +1,4 @@
+import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/core/dialogs/delete_confirmation_dialog.dart';
 import 'package:facultyfeed/core/models/feedback_form.dart';
 import 'package:facultyfeed/core/snackbar.dart';
@@ -195,7 +196,7 @@ class _EditFeedbackScreenState extends ConsumerState<EditFeedbackScreen> {
                   border: OutlineInputBorder(),
                 ),
                 items:
-                    ['CSE', 'IT']
+                    Constants.branches
                         .map(
                           (branch) => DropdownMenuItem(
                             value: branch,

@@ -75,7 +75,9 @@ class FeedbackForm {
       semester: map['semester'] as int,
       branch: map['branch'] as String,
       totalResponses: map['totalResponses'] as int,
-      ratings: Map<String, double>.from(map['ratings']),
+      ratings: (map['ratings'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(key, (value as num).toDouble()),
+      ),
       questions: List<String>.from(map['questions']),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
     );

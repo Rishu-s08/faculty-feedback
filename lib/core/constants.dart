@@ -1,4 +1,5 @@
 import 'package:facultyfeed/core/models/user_model.dart';
+import 'package:facultyfeed/features/admin/screens/admin_home_screen.dart';
 import 'package:facultyfeed/features/admin/screens/admin_screen.dart';
 import 'package:facultyfeed/features/dashboard/screens/feed_screen.dart';
 import 'package:facultyfeed/features/student/screens/student_profile_screen.dart';
@@ -10,10 +11,13 @@ class Constants {
 
   Constants(UserModel user) {
     pages = [
-      FeedScreen(),
-      user.role == 'admin' ? AdminProfileScreen() : StudentProfileScreen(),
+      user.role == 'admin' ? const AdminHomeScreen() : const FeedScreen(),
+      user.role == 'admin' ? const AdminProfileScreen() : const StudentProfileScreen(),
     ];
   }
 
   static const String userImage = "assets/images/user-icon.png";
+
+  /// Standard branch list used across the app.
+  static const List<String> branches = ['CSE', 'IT', 'TT', 'TC', 'ME', 'ECE'];
 }

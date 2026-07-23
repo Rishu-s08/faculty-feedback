@@ -229,6 +229,51 @@ class StudentsRepository {
     }
   }
 
+  /// Get detailed breakdown: list of {semester, branch, batch, count}
+  Future<List<Map<String, dynamic>>> getDetailedStudentBreakdown() async {
+    try {
+      final snap = await _users.where('role', isEqualTo: 'student').get();
+      // Group by (semester, branch, batch)
+      final Map<String, int> grouped = {};
+      final Map<String, Map<String, dynamic>> keys = {};
+
+      for (final doc in snap.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final sem = data['semester'] as int?;
+        final branch = data['branch'] as String? ?? 'Unknown';
+        final batch = data['batch'] != null ? (data['batch'] as num).toInt() : 0;
+        if (sem == null) continue;
+
+        final key = '$sem|$branch|$batch';
+        grouped[key] = (grouped[key] ?? 0) + 1;
+        keys[key] = {'semester': sem, 'branch': branch, 'batch': batch};
+      }
+
+      final result = grouped.entries.map((e) {
+        final info = keys[e.key]!;
+        return {
+          'semester': info['semester'],
+          'branch': info['branch'],
+          'batch': info['batch'],
+          'count': e.value,
+        };
+      }).toList();
+
+      // Sort by semester, then branch, then batch
+      result.sort((a, b) {
+        final semCmp = (a['semester'] as int).compareTo(b['semester'] as int);
+        if (semCmp != 0) return semCmp;
+        final brCmp = (a['branch'] as String).compareTo(b['branch'] as String);
+        if (brCmp != 0) return brCmp;
+        return (a['batch'] as int).compareTo(b['batch'] as int);
+      });
+
+      return result;
+    } catch (e) {
+      return [];
+    }
+  }
+
   /// Get available batch years from all students
   Future<List<int>> getAvailableBatches() async {
     try {

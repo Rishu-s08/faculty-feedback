@@ -1,3 +1,4 @@
+import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/core/loader.dart';
 import 'package:facultyfeed/core/no_internet_widget.dart';
 import 'package:facultyfeed/features/auth/controller/auth_controller.dart';
@@ -139,7 +140,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                             Expanded(
                               child: DropdownButtonFormField(
                                 items:
-                                    ["All", "CSE", "IT"]
+                                    ["All", ...Constants.branches]
                                         .map(
                                           (branch) => DropdownMenuItem(
                                             value: branch,

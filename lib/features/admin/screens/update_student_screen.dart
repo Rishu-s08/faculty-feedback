@@ -1,3 +1,4 @@
+import 'package:facultyfeed/core/constants.dart';
 import 'package:facultyfeed/features/admin/repository/students_repository.dart';
 import 'package:facultyfeed/core/models/user_model.dart';
 import 'package:facultyfeed/core/snackbar.dart';
@@ -20,7 +21,7 @@ class _UpdateStudentScreenState extends ConsumerState<UpdateStudentScreen> {
   bool _loading = false;
   UserModel? _found;
 
-  final branches = ['CSE', 'ECE', 'ME', 'CE', 'EE', 'IT'];
+  final branches = Constants.branches;
   final semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
   @override
